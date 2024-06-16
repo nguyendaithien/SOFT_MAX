@@ -10,8 +10,8 @@ module PE #(parameter WGT_WIDTH = 8, DATA_WIDTH = 16, IFM_WIDTH = 8)(
 	input clk    ;  
 	input rst_n  ;
 	input set_reg;
-	input  signed [IFM_WIDTH-1:0   ]          in1      ;
-	input  signed [WGT_WIDTH-1:0   ]          in2      ;
+	input  signed [DATA_WIDTH-1:0   ]          in1      ;
+	input  signed [DATA_WIDTH-1:0   ]          in2      ;
 	output signed [DATA_WIDTH-1:0  ]          psum_out ;
 	
 	reg signed  [DATA_WIDTH-1:0] psum;
