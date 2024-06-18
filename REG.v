@@ -1,3 +1,4 @@
+`timescale 1 ns/10 ps
 module REGISTER #(parameter DATA_WIDTH = 16) (
 		clk,
 		rst_n,

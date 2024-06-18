@@ -31,10 +31,10 @@ module WRITE_DATA #(parameter DATA_WIDTH = 24 , OUTPUT_SIZE = 10 ) (
 		end
 	end
 
-	always @(state or current_state or sel_data or counter_compute) begin
+	always @(state or current_state or sel_data or counter_compute or counter_ifm ) begin
 		case(current_state)
 			3'd0: begin
-				if((state == 4'd5) && (counter_ifm == 1) && (counter_compute > 0)  )
+				if((state == 4'd5) && (counter_ifm == 0) && (counter_compute > 0) )
 					next_state = WRITE_DATA;
 				else 
 					next_state = IDLE;

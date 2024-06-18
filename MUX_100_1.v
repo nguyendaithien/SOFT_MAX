@@ -1,3 +1,4 @@
+`timescale 1 ns/10 ps
 module MUX_100_TO_1 #( parameter DATA_WIDTH = 16) (
 		  sel,
 			out,

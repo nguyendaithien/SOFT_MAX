@@ -1,3 +1,4 @@
+`timescale 1 ns/10 ps
 module REG_CONTROL #( parameter DATA_WIDTH = 16) (
 	current_state,
 	counter_ifm,

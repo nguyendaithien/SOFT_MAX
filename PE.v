@@ -1,3 +1,4 @@
+`timescale 1 ns/10 ps
 module PE #(parameter WGT_WIDTH = 8, DATA_WIDTH = 16, IFM_WIDTH = 8)(
     clk,
     rst_n,

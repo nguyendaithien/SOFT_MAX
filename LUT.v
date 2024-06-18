@@ -1,3 +1,4 @@
+`timescale 1 ns/10 ps
 module LUT #(parameter DATA_WIDTH = 16 , DATA_WIDTH_OUT = 24) (
 		data_in
 	 ,data_out

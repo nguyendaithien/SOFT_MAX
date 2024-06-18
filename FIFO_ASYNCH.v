@@ -1,3 +1,4 @@
+`timescale 1 ns/10 ps
 module FIFO_ASYNCH #(parameter DATA_WIDTH = 16, FIFO_SIZE = 7, ADD_WIDTH = 3) (
 		clk1  ,
 		clk2  ,

@@ -1,3 +1,4 @@
+`timescale 1 ns/10 ps
 module SOFTMAX_TB;
     // Parameters
     parameter DATA_WIDTH_IN = 16; 
@@ -25,6 +26,7 @@ module SOFTMAX_TB;
     reg [31:0] ifm_cnt;
     reg [DATA_WIDTH_IN-1:0] ifm_r;
     integer file;
+		wire end_softmax;
 
     // Instantiate the DUT (Device Under Test)
     SOFTMAX_TOP #(
@@ -42,7 +44,8 @@ module SOFTMAX_TB;
         .ifm(ifm),
         .softmax_out_final(softmax_out_final),
         .valid_data(valid_data),
-        .ifm_read(ifm_read)
+        .ifm_read(ifm_read),
+        .end_softmax(end_softmax)
     );
 
     // Initialize file for writing
@@ -116,19 +119,25 @@ module SOFTMAX_TB;
 
     // Stop simulation after a certain time
     initial begin
-        #1000000 $finish;
+        #1500000 $finish;
     end
 
+always @(posedge end_softmax) begin
+	$finish;
+end
     // Write softmax_out_final to file when valid_data is high
     always @(posedge clk1) begin
         if (valid_data) begin
-            $fwrite(file, "%d %b\n", softmax_out_final, softmax_out_final);
+            $fwrite(file,"%b\n", softmax_out_final);
         end
     end
 
+    always @(dut.counter_compute) begin
+			$display( " counter_compute : %d ", dut.counter_compute);
+    end
     // Close the file at the end of simulation
     initial begin
-        #1000000 $fclose(file);
+        #1500000 $fclose(file);
     end
 
 endmodule

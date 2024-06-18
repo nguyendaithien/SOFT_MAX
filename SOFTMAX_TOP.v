@@ -1,3 +1,4 @@
+`timescale 1 ns/10 ps
 module SOFTMAX_TOP #(parameter DATA_WIDTH_IN = 16, NUM_SUBTRACT = 1000,  IFM_SIZE = 1000, LUT_SIZE = 100, DATA_WIDTH_OUT = 26, NUM_REG_IFM = 1000)  (
 		clk1        ,
 		clk2        ,
@@ -6,8 +7,8 @@ module SOFTMAX_TOP #(parameter DATA_WIDTH_IN = 16, NUM_SUBTRACT = 1000,  IFM_SIZ
 		ifm         ,
 		softmax_out_final ,
 		valid_data,
-		ifm_read
-
+		ifm_read,
+    end_softmax
 );
   input clk1                                   ;
   input clk2                                   ;
@@ -17,6 +18,7 @@ module SOFTMAX_TOP #(parameter DATA_WIDTH_IN = 16, NUM_SUBTRACT = 1000,  IFM_SIZ
   output wire [DATA_WIDTH_OUT- 1:0] softmax_out_final ;
   output wire valid_data                       ;
 	output wire ifm_read;
+  output wire end_softmax;
 
 	assign ifm_read = valid_data;
 	wire wr_ifm;
@@ -43,12 +45,14 @@ module SOFTMAX_TOP #(parameter DATA_WIDTH_IN = 16, NUM_SUBTRACT = 1000,  IFM_SIZ
 	wire [DATA_WIDTH_OUT-1:0] softmax_out_8;
 	wire [DATA_WIDTH_OUT-1:0] softmax_out_9;
 	wire [DATA_WIDTH_OUT-1:0] softmax_out_10;
+
+  wire [ DATA_WIDTH_IN-1:0] result [ 999:0];
 	
 	wire [3:0] sel_mux_output;
 	wire [DATA_WIDTH_IN-1:0] data_out_mux [9:0];
   wire flag;
 	wire flag_w;
-	assign flag_w = (counter_ifm == 0);
+	assign flag_w = ((counter_ifm == 0) || (counter_ifm == 1));
 	wire set_reg;
 
 
@@ -76,7 +80,7 @@ reg [DATA_WIDTH_OUT-1:0] reg_out_10 ;
 wire [3:0] current_state;
 wire [7:0] counter_compute;
 
-CONTROLLER #(.DATA_WIDTH(DATA_WIDTH_IN), .IFM_SIZE(IFM_SIZE), .LUT_SIZE(IFM_SIZE)) controller (
+CONTROLLER #(.DATA_WIDTH(DATA_WIDTH_IN), .IFM_SIZE(IFM_SIZE), .LUT_SIZE(IFM_SIZE),.COMPUTE_NUM(100)) controller (
 		 .clk            ( clk1             )
 		,.rst_n          ( rst_n            )
 		,.valid_ifm      ( valid_ifm        )
@@ -94,6 +98,7 @@ CONTROLLER #(.DATA_WIDTH(DATA_WIDTH_IN), .IFM_SIZE(IFM_SIZE), .LUT_SIZE(IFM_SIZE
 		,.flag           ( flag             )
 		,.set_reg        ( set_reg          )
 		,.counter_compute( counter_compute  )
+    ,.end_softmax    (end_softmax)
 	);
 
 FIFO_ASYNCH #(.DATA_WIDTH(DATA_WIDTH_IN), .FIFO_SIZE(IFM_SIZE), .ADD_WIDTH(10)) ifm_buffer (
@@ -147,7 +152,6 @@ WRITE_DATA #(.DATA_WIDTH(DATA_WIDTH_OUT), .OUTPUT_SIZE(10)) write_data (
      end
  endgenerate
 
- wire [ DATA_WIDTH_IN-1:0] result [ 999:0];
  wire [ DATA_WIDTH_OUT-1:0] psum_out_1;
  wire [ DATA_WIDTH_OUT-1:0] psum_out_2;
  wire [ DATA_WIDTH_OUT-1:0] psum_out_3;
@@ -1318,9 +1322,9 @@ PE #(.DATA_WIDTH(DATA_WIDTH_OUT)) pe2 (
      .clk      ( clk1           )
     ,.rst_n    ( rst_n          )
     ,.set_reg  ( set_reg        )
-    ,.in1      ( psum_in_1      )
+    ,.in1      ( psum_in_2      )
     ,.in2      ( data_out_lut_2 )
-    ,.psum_out ( psum_out_1     )
+    ,.psum_out ( psum_out_2     )
 	);
 PE #(.DATA_WIDTH(DATA_WIDTH_OUT)) pe3 (
      .clk      ( clk1           )
